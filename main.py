@@ -2,13 +2,14 @@ import dynmap_api
 import time
 import os
 
-#Gets the players position on defined server and world with the dynmap
+#Gets the players position on a given server link with the dynmap
 def PlayerPos(url,world):
 	ServerData = dynmap_api.net.fetchServerUpdate(dynmap_url=url, world=world)
 	plAmount = ServerData.currentcount
 	AllPos = []
 	for i in range(plAmount):
 		players = ServerData.players
+		print(players)
 		player1 = str(players[i-1])
 		player1 = player1.replace("=", " ")
 		player1 = player1.replace("'", " ")
@@ -83,6 +84,9 @@ def CP(direction,CP,PlayerPos1,PlayerPos2):
 #print(len(PlayerPos1))
 
 
+PlayerPos("https://earthmc.net/map/aurora/","earth")
+
+
 #temporary code to delete the race data file automaticly
 
 if os.path.exists("RaceDataTest.txt"):
@@ -97,7 +101,8 @@ file.write("test:\n")
 
 while True :
 	#file.write(PlayerPos("http://localhost:8123/","world"))
-	file.write(PlayerPos("http://mc.mythcosmos.de:8123/","Boatrace"))
+	#file.write(PlayerPos("http://mc.mythcosmos.de:8123/","Boatrace"))
 	#file.write(str(PlayerPos("https://earthmc.net/map/aurora/", "earth"))+"\n")
+	file.write(str(PlayerPos("http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0", "bootsrennen2"))+"\n")
 	time.sleep(0.1)
 file.close()
