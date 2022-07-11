@@ -1,4 +1,6 @@
 import requests
+import os
+import time
 
 
 # Gets the players position on a given server link with the dynmap
@@ -8,14 +10,15 @@ def PlayerPos(url):
 
 	AllPos = []
 	for i in range(plAmount):
-		playerPos = []
-		playerPos.append(r["players"][i - 1]["name"])
-		playerPos.append(r["players"][i - 1]["x"])
-		playerPos.append(r["players"][i - 1]["z"])
-
+		playerPos = [r["players"][i - 1]["name"],r["players"][i - 1]["x"],r["players"][i - 1]["z"]]
 		AllPos.append(playerPos)
 	return AllPos
 
+# this function returns a current player count on a given server
+def plAmount(url):
+	r = requests.get(url).json()
+	plAmount = r["currentcount"]
+	return plAmount
 
 # checkpoint detector for minecraft on the y axis
 def CPTrackerY(CPx, CPy1, CPy2, POSx1, POSy1, POSx2, POSy2):
@@ -73,3 +76,38 @@ def CP(direction, CP, PlayerPos1, PlayerPos2):
 			return True
 		else:
 			return False
+
+# this functions records all players positions on a given server during a set time (all times in seconds)
+def datarec(filename,ti,url):
+
+	finishtime = time.monotonic_ns() + ti * 1000000000
+	currenttime = time.monotonic_ns()
+
+	# code to delete the race data file automatically
+	if os.path.exists(filename):
+		print(f"{filename} already exists. Do you want to overwrite the file ?(y/n)")
+		if input() == "y":
+			os.remove(filename)
+		else:
+			print("Recording trial interupted")
+			return
+	else:
+		print(f"{filename} does not exist. Creating file...")
+
+	# gets data during recording
+	file = open(filename, "x")
+	print("Started writing the players positions")
+	file.write("Started saving positions on " + time.asctime(time.gmtime()) + " :\n")
+
+	ppos2 = PlayerPos(url)
+
+	while currenttime <= finishtime:
+		ppos1 = PlayerPos(url)
+
+		if ppos1 != ppos2:
+			file.write(time.asctime(time.gmtime()) + str(PlayerPos(url)) + "\n")
+		currenttime = time.monotonic_ns()
+		ppos2 = PlayerPos(url)
+
+	file.close()
+	print("recording finished")

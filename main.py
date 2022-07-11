@@ -5,28 +5,10 @@ import os
 
 # this saves data during 2 minutes on a given server
 
+ms = time.time_ns() // 1_000_000  # time since epoch(january 1 1970 00h00 on my computer
 
-finishtime = time.monotonic_ns() + 120_000_000_000
-currenttime = time.monotonic_ns()
 
-filetime = time.strftime("%Y.%d.%m.%Hh.%Mm.%Ss")
-print(filetime)
-filename = f"{filetime}_RaceDataTest"
-
-# temporary code to delete the race data file automatically
-if os.path.exists(filename):
-	os.remove(filename)
+if Functions.plAmount("http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0") >> 0:
+	Functions.datarec("test.txt",30,"http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0")
 else:
-	print(f"{filename} does not exist")
-
-# get data during race and storing it for after
-file = open(filename, "x")
-print("Started writing the players positions")
-file.write("Started saving positions on " + time.asctime(time.gmtime()) + " :\n")
-
-while currenttime <= finishtime:
-	file.write(str(Functions.PlayerPos("http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0")) + "\n")
-	time.sleep(0.1)
-	currenttime = time.monotonic_ns()
-file.close()
-print("process finished")
+	print("No players are online there is no point of recording data")
