@@ -1,14 +1,12 @@
 import Functions
-import time
-import os
 
+url = "http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0"
+zandvoortcp = ["Z",-1389,-259,-251]
 
-# this saves data during 2 minutes on a given server
+Functions.datatotime("test1.json",1)
 
-ms = time.time_ns() // 1_000_000  # time since epoch(january 1 1970 00h00 on my computer
-
-
-if Functions.plAmount("http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0") >> 0:
-	Functions.datarec("test.txt",30,"http://mc.mythcosmos.de:8123/up/world/bootsrennen2/0")
+if Functions.plAmount(url) >> 0:
+	Functions.datarec("test1.json",10,url)
 else:
 	print("No players are online there is no point of recording data")
+

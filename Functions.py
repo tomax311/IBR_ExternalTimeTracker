@@ -1,6 +1,7 @@
 import requests
 import os
 import time
+import json
 
 
 # Gets the players position on a given server link with the dynmap
@@ -13,6 +14,15 @@ def PlayerPos(url):
 		playerPos = [r["players"][i - 1]["name"],r["players"][i - 1]["x"],r["players"][i - 1]["z"]]
 		AllPos.append(playerPos)
 	return AllPos
+
+#return a clean player list with coordinates
+def playerdict(url):
+	r  = requests.get(url).json()
+	pldict = []
+	for i in range(plAmount(url)):
+		x = {r["players"][i - 1]["name"],r["players"][i - 1]["x"],r["players"][i - 1]["z"]}
+		pldict.append(x)
+	return pldict
 
 # this function returns a current player count on a given server
 def plAmount(url):
@@ -42,19 +52,19 @@ def CPTrackerX(CPy, CPx1, CPx2, POSx1, POSy1, POSx2, POSy2):
 		return False
 
 
-# This function is to choose witch way the checkpoint is (use "X"/"Y")
-# CP variable example CP = [the lonely coord,the first coord,the second coord]
-def CP(direction, CP, PlayerPos1, PlayerPos2):
+# This function is to choose witch way the checkpoint is (use "X"/"Z")
+# CP variable example CP = [direction,the lonely coord,the first coord,the second coord]
+def CP( CP, PlayerPos1, PlayerPos2 ):
 	POSx1 = int(PlayerPos1[1])
 	POSy1 = int(PlayerPos1[2])
 	POSx2 = int(PlayerPos2[1])
 	POSy2 = int(PlayerPos2[2])
 
-	if direction == "X":
+	if CP[0] == "X":
 
-		CPy = CP[0]
-		CPx1 = CP[1]
-		CPx2 = CP[2]
+		CPy = CP[1]
+		CPx1 = CP[2]
+		CPx2 = CP[3]
 
 		r = (CPy - POSy1) / (POSy2 - POSy1)
 		post = (POSx2 - POSx1) * r + POSx1
@@ -65,9 +75,9 @@ def CP(direction, CP, PlayerPos1, PlayerPos2):
 			return False
 
 	else:
-		CPx = CP[0]
-		CPy1 = CP[1]
-		CPy2 = CP[2]
+		CPx = CP[1]
+		CPy1 = CP[2]
+		CPy2 = CP[3]
 
 		r = (CPx - POSx1) / (POSx2 - POSx1)
 		post = (POSy2 - POSy1) * r + POSy1
@@ -95,19 +105,28 @@ def datarec(filename,ti,url):
 		print(f"{filename} does not exist. Creating file...")
 
 	# gets data during recording
-	file = open(filename, "x")
-	print("Started writing the players positions")
-	file.write("Started saving positions on " + time.asctime(time.gmtime()) + " :\n")
-
 	ppos2 = PlayerPos(url)
+	i = 1
+	with open(filename, "w") as outfile:
+		print("started recording data")
+		d = {}
+		while currenttime <= finishtime:
+			ppos1 = PlayerPos(url)
+			d[f"pos{i}"] = {"time": time.asctime(time.gmtime()), "players": ppos1}
+			i = i + 1
+			currenttime = time.monotonic_ns()
+			ppos2 = PlayerPos(url)
+		json.dump(d,outfile,indent=1)
 
-	while currenttime <= finishtime:
-		ppos1 = PlayerPos(url)
-
-		if ppos1 != ppos2:
-			file.write(time.asctime(time.gmtime()) + str(PlayerPos(url)) + "\n")
-		currenttime = time.monotonic_ns()
-		ppos2 = PlayerPos(url)
-
-	file.close()
 	print("recording finished")
+
+def	datatotime(filename,cp):
+
+	f = open(filename)
+	pos = json.load(f)
+
+
+	for i in range(0,len(pos)):
+		print(i)
+		print(pos[f"pos{i+1}"])
+
