@@ -82,7 +82,6 @@ def datarec():
 	# gets data during recording
 	i = 1
 	print("started recording data")
-	d = {}
 	while currenttime <= finishtime:
 		ppos1 = PlayerPos(link)
 
@@ -105,13 +104,12 @@ def flink(name):
 		links = json.load(f)
 		linkname = str(name)
 		flink = links[linkname]
-	print(flink)
 	return flink
 
 
 root = Tk()
 root.title("IBR_DataRecorder")
-style =ThemedStyle(root)
+style = ThemedStyle(root)
 style.set_theme('equilux')
 root.iconphoto(False, PhotoImage(file='images/IBR_DataRecorder-logo.png'))
 
@@ -206,12 +204,5 @@ filler8.grid(row=8, columnspan=9, sticky="news")
 
 root.columnconfigure(8, weight=1)
 root.rowconfigure(8,weight=1)
-
-# events
-# (FileName.get(), Time.get(), flink(urlsVar.get()))
-
-
-# logic
-
 
 root.mainloop()
