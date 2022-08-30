@@ -38,12 +38,12 @@ def milliseconds():
 	return int(millistr.join(millisecond))
 
 def PlayerPos(url):
-	r = requests.get(url).json()
-	plAmount = r["currentcount"]
+	data = requests.get(url).json()
+	plAmount = data["currentcount"]
 
 	AllPos = []
 	for i in range(plAmount):
-		playerPos = [r["players"][i - 1]["name"], r["players"][i - 1]["x"], r["players"][i - 1]["z"]]
+		playerPos = [data["players"][i - 1]["name"], data["players"][i - 1]["x"], data["players"][i - 1]["z"]]
 		AllPos.append(playerPos)
 	return AllPos
 
@@ -54,7 +54,7 @@ def datarec():
 	link = str(flink(urlsVar.get()))
 	ti = int(Time.get())
 	filename = str(FileName.get())
-	filepath = "outpout\\" + filename +".json"
+	filepath = "output\\" + filename +".json"
 	finishtime = time.monotonic_ns() + ti * 1000000000
 	currenttime = time.monotonic_ns()
 
@@ -63,12 +63,12 @@ def datarec():
 		true = True
 		nbr = 1
 		while true:
-			if os.path.exists("outpout\\" + filename + f"({nbr})" +".json"):
+			if os.path.exists("output\\" + filename + f"({nbr})" +".json"):
 				nbr = nbr + 1
 			else:
 				true = False
 				currentfilename = filename + f"({nbr})" +".json"
-				filepath = "outpout\\" + currentfilename
+				filepath = "output\\" + currentfilename
 				print(f"{filename}.json already exists. Creating {currentfilename}...")
 
 		with open(filepath, "w") as creator:
